@@ -133,19 +133,18 @@ export function CheckoutForm({
       toast.error("Enter the sender number");
       return;
     }
-    if (!file) {
-      toast.error("Upload your payment receipt");
-      return;
-    }
-
     setSubmitting(true);
     try {
-      const ext = file.name.split(".").pop();
-      const path = `${userId}/${Date.now()}-receipt.${ext}`;
-      const { error: upErr } = await supabase.storage
-        .from("payment-receipts")
-        .upload(path, file, { upsert: false });
-      if (upErr) throw upErr;
+      // Receipt is optional — only upload when the user picked a file.
+      let receiptPath: string | null = null;
+      if (file) {
+        const ext = file.name.split(".").pop();
+        receiptPath = `${userId}/${Date.now()}-receipt.${ext}`;
+        const { error: upErr } = await supabase.storage
+          .from("payment-receipts")
+          .upload(receiptPath, file, { upsert: false });
+        if (upErr) throw upErr;
+      }
 
       const { error: insErr } = await supabase.from("payments").insert({
         user_id: userId,
@@ -154,7 +153,7 @@ export function CheckoutForm({
         method: selected.method,
         transaction_id: transactionId.trim(),
         sender_number: senderNumber.trim(),
-        receipt_url: path,
+        receipt_url: receiptPath,
         note: note.trim() || null,
         coupon_id: applied?.id ?? null,
         discount,
@@ -359,7 +358,7 @@ export function CheckoutForm({
 
               {/* Receipt upload */}
               {/* <div>
-                <Label>Payment receipt</Label>
+                <Label>Payment receipt (optional)</Label>
                 <button
                   type="button"
                   onClick={() => fileRef.current?.click()}
@@ -381,6 +380,18 @@ export function CheckoutForm({
                   className="hidden"
                   onChange={onFile}
                 />
+                {file && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFile(null);
+                      if (fileRef.current) fileRef.current.value = "";
+                    }}
+                    className="mt-2 text-xs text-muted-foreground underline"
+                  >
+                    Remove receipt
+                  </button>
+                )}
               </div> */}
 
               <Button

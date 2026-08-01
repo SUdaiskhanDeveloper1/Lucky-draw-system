@@ -47,8 +47,8 @@ export default async function PaymentsPage() {
                   <th className="px-4 py-3 font-medium">Campaign</th>
                   <th className="px-4 py-3 font-medium">Amount</th>
                   <th className="px-4 py-3 font-medium">Method</th>
-                  <th className="px-4 py-3 font-medium">Txn ID</th>
-                  <th className="px-4 py-3 font-medium">Receipt</th>
+                  {/* <th className="px-4 py-3 font-medium">Txn ID</th> */}
+                  <th className="px-4 py-3 font-medium">Receipt no</th>
                   <th className="px-4 py-3 font-medium">Status</th>
                 </tr>
               </thead>
@@ -75,9 +75,9 @@ export default async function PaymentsPage() {
                     <td className="px-4 py-3 font-mono text-xs">
                       {p.transaction_id ?? "—"}
                     </td>
-                    <td className="px-4 py-3">
+                    {/* <td className="px-4 py-3">
                       <ReceiptLink path={p.receipt_url} />
-                    </td>
+                    </td> */}
                     <td className="px-4 py-3">
                       <div className="space-y-1">
                         <Badge status={p.status} />

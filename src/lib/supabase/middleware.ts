@@ -35,6 +35,26 @@ export async function updateSession(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
 
+  /**
+   * Redirect while carrying over any cookies Supabase just refreshed.
+   * A bare NextResponse.redirect() would drop them, and because Supabase
+   * rotates refresh tokens the browser would be left holding a spent token —
+   * every later request then reads as logged out (endless /login loop).
+   */
+  const redirectTo = (pathname: string, params?: Record<string, string>) => {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname;
+    url.search = "";
+    for (const [key, value] of Object.entries(params ?? {})) {
+      url.searchParams.set(key, value);
+    }
+    const redirect = NextResponse.redirect(url);
+    for (const cookie of response.cookies.getAll()) {
+      redirect.cookies.set(cookie);
+    }
+    return redirect;
+  };
+
   const protectedPrefixes = [
     "/dashboard",
     "/profile",
@@ -49,10 +69,7 @@ export async function updateSession(request: NextRequest) {
 
   // Not logged in trying to reach a protected page -> login
   if (isProtected && !user) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    url.searchParams.set("redirect", path);
-    return NextResponse.redirect(url);
+    return redirectTo("/login", { redirect: path });
   }
 
   // Admin route guard
@@ -63,17 +80,13 @@ export async function updateSession(request: NextRequest) {
       .eq("id", user.id)
       .maybeSingle();
     if (!admin) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/dashboard";
-      return NextResponse.redirect(url);
+      return redirectTo("/dashboard");
     }
   }
 
   // Logged in trying to reach auth pages -> dashboard
   if (user && ["/login", "/signup"].includes(path)) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
-    return NextResponse.redirect(url);
+    return redirectTo("/dashboard");
   }
 
   return response;

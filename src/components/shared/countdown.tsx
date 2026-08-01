@@ -1,24 +1,30 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getCountdown } from "@/lib/utils";
-import { cn } from "@/lib/utils";
+import { getCountdown, cn } from "@/lib/utils";
 
 export function Countdown({
   target,
   className,
   compact,
 }: {
-  target: string | null | undefined;
+  target: string | null |undefined;
   className?: string;
   compact?: boolean;
 }) {
-  const [c, setC] = useState(() => getCountdown(target));
+  const [c, setC] = useState<ReturnType<typeof getCountdown> | null>(null);
 
   useEffect(() => {
-    const id = setInterval(() => setC(getCountdown(target)), 1000);
+    const update = () => setC(getCountdown(target));
+
+    update(); // initial calculation after mount
+
+    const id = setInterval(update, 1000);
+
     return () => clearInterval(id);
   }, [target]);
+
+  if (!c) return null;
 
   if (c.ended) {
     return (
