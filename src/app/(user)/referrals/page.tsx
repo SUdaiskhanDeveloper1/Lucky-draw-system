@@ -61,31 +61,41 @@ export default async function ReferralsPage() {
   return (
     <div className="space-y-6">
       {/* Bonus banner */}
-      <Card>
-        <CardContent className="flex flex-col gap-4 pt-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="relative overflow-hidden rounded-2xl bg-brand-gradient p-6 text-primary-foreground shadow-card sm:p-8">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-white/10 blur-3xl"
+        />
+        <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-4">
-            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/15 backdrop-blur">
               <Gift className="h-6 w-6" />
             </span>
             <div>
-              <h2 className="text-lg font-semibold">Refer & Earn</h2>
-              <p className="max-w-md text-sm text-muted-foreground">
+              <h2 className="font-display text-xl font-bold tracking-tight">
+                Refer &amp; Earn
+              </h2>
+              <p className="mt-1.5 max-w-md text-sm leading-relaxed text-primary-foreground/85">
                 {bonusText}
               </p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3 text-center">
-            <div className="rounded-lg border bg-muted px-4 py-2">
-              <p className="text-xl font-bold">{referrals.length}</p>
-              <p className="text-xs text-muted-foreground">Referred</p>
+            <div className="rounded-xl bg-white/15 px-5 py-3 backdrop-blur">
+              <p className="font-display text-2xl font-extrabold tabular-nums">
+                {referrals.length}
+              </p>
+              <p className="text-xs text-primary-foreground/75">Referred</p>
             </div>
-            <div className="rounded-lg border bg-muted px-4 py-2">
-              <p className="text-xl font-bold">{formatCurrency(totalEarned)}</p>
-              <p className="text-xs text-muted-foreground">Earned</p>
+            <div className="rounded-xl bg-white/15 px-5 py-3 backdrop-blur">
+              <p className="font-display text-2xl font-extrabold tabular-nums">
+                {formatCurrency(totalEarned)}
+              </p>
+              <p className="text-xs text-primary-foreground/75">Earned</p>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Share */}
       {/* <Card>
@@ -116,7 +126,7 @@ export default async function ReferralsPage() {
               icon={Users}
             />
           ) : (
-            <ul className="divide-y">
+            <ul className="divide-y divide-border/60">
               {referrals.map((r) => {
                 const ref = Array.isArray(r.referred)
                   ? r.referred[0]
@@ -124,14 +134,14 @@ export default async function ReferralsPage() {
                 return (
                   <li
                     key={r.id}
-                    className="flex items-center justify-between gap-3 py-3"
+                    className="flex items-center justify-between gap-3 py-3.5 first:pt-0 last:pb-0"
                   >
                     <div className="flex min-w-0 items-center gap-3">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-xs font-semibold">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent text-xs font-bold text-accent-foreground">
                         {initials(ref?.full_name)}
                       </span>
                       <div className="min-w-0">
-                        <p className="truncate font-medium">
+                        <p className="truncate text-sm font-semibold">
                           {ref?.full_name ?? "New user"}
                         </p>
                         <p className="truncate text-xs text-muted-foreground">
@@ -139,9 +149,9 @@ export default async function ReferralsPage() {
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex shrink-0 items-center gap-3">
                       {r.bonus_amount > 0 && (
-                        <span className="text-sm font-medium text-success">
+                        <span className="text-sm font-semibold tabular-nums text-success">
                           +{formatCurrency(r.bonus_amount)}
                         </span>
                       )}

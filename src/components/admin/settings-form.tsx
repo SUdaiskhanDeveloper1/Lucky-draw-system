@@ -95,7 +95,7 @@ export function SettingsForm({
         <CardHeader>
           <CardTitle className="text-base">General</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-4">
           {field("Website name", g.site_name, (v) => setG({ ...g, site_name: v }))}
           {field("Logo URL", g.logo_url, (v) => setG({ ...g, logo_url: v }))}
           {field("Favicon URL", g.favicon_url, (v) => setG({ ...g, favicon_url: v }))}
@@ -104,9 +104,10 @@ export function SettingsForm({
             <div className="flex gap-2">
               <input
                 type="color"
+                aria-label="Pick primary color"
                 value={g.primary_color ?? "#7c3aed"}
                 onChange={(e) => setG({ ...g, primary_color: e.target.value })}
-                className="h-10 w-14 rounded-lg border"
+                className="h-11 w-14 shrink-0 cursor-pointer rounded-lg border border-input bg-card p-1 shadow-xs"
               />
               <Input
                 value={g.primary_color ?? ""}
@@ -114,7 +115,7 @@ export function SettingsForm({
               />
             </div>
           </div>
-          <label className="flex items-center gap-2 text-sm">
+          <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-border/70 bg-muted/40 px-4 py-3 text-sm font-medium transition-colors duration-200 hover:bg-muted/70">
             <input
               type="checkbox"
               checked={!!g.maintenance_mode}
@@ -133,7 +134,7 @@ export function SettingsForm({
         <CardHeader>
           <CardTitle className="text-base">Contact</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-4">
           {field("Email", c.email, (v) => setC({ ...c, email: v }))}
           {field("Phone", c.phone, (v) => setC({ ...c, phone: v }))}
           {field("WhatsApp", c.whatsapp, (v) => setC({ ...c, whatsapp: v }))}
@@ -149,7 +150,7 @@ export function SettingsForm({
         <CardHeader>
           <CardTitle className="text-base">Social Links</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-4">
           {field("Facebook", s.facebook, (v) => setS({ ...s, facebook: v }))}
           {field("Instagram", s.instagram, (v) => setS({ ...s, instagram: v }))}
           {field("YouTube", s.youtube, (v) => setS({ ...s, youtube: v }))}
@@ -165,7 +166,7 @@ export function SettingsForm({
         <CardHeader>
           <CardTitle className="text-base">Referral</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-4">
           {field("Referral bonus (Rs.)", r.referral_bonus, (v) => setR({ ...r, referral_bonus: Number(v) }), "number")}
           {field("Referral commission (%)", r.referral_commission, (v) => setR({ ...r, referral_commission: Number(v) }), "number")}
           <Button loading={busy === "referral"} onClick={() => saveGroup("referral", r)}>
@@ -179,7 +180,7 @@ export function SettingsForm({
         <CardHeader>
           <CardTitle className="text-base">Email Settings</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-4">
           {field("From name", em.from_name, (v) => setEm({ ...em, from_name: v }))}
           {field("From email", em.from_email, (v) => setEm({ ...em, from_email: v }))}
           <Button loading={busy === "email"} onClick={() => saveGroup("email", em)}>
@@ -193,7 +194,7 @@ export function SettingsForm({
         <CardHeader>
           <CardTitle className="text-base">SMS Settings</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-4">
           {field("Provider", sm.provider, (v) => setSm({ ...sm, provider: v }))}
           {field("API key", sm.api_key, (v) => setSm({ ...sm, api_key: v }))}
           <Button loading={busy === "sms"} onClick={() => saveGroup("sms", sm)}>
@@ -212,7 +213,7 @@ export function SettingsForm({
             <div key={m.id} className="space-y-3 rounded-lg border p-4">
               <div className="flex items-center justify-between">
                 <p className="font-medium capitalize">{String(m.method).replace("_", " ")}</p>
-                <label className="flex items-center gap-2 text-sm">
+                <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-border/70 bg-muted/40 px-4 py-3 text-sm font-medium transition-colors duration-200 hover:bg-muted/70">
                   <input
                     type="checkbox"
                     checked={m.is_active}

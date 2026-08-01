@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, HelpCircle } from "lucide-react";
+import { HelpCircle, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Faq } from "@/lib/types/database";
 import { EmptyState } from "@/components/ui/misc";
@@ -24,26 +24,52 @@ export function FaqAccordion({ faqs }: { faqs: Faq[] }) {
       {faqs.map((faq) => {
         const open = openId === faq.id;
         return (
-          <div key={faq.id} className="card-surface overflow-hidden">
+          <div
+            key={faq.id}
+            className={cn(
+              "card-surface overflow-hidden transition-all duration-300 ease-out-expo",
+              open && "border-primary/25 shadow-card"
+            )}
+          >
             <button
               type="button"
               onClick={() => setOpenId(open ? null : faq.id)}
               aria-expanded={open}
-              className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left font-medium transition-colors hover:bg-secondary/50"
+              className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors duration-200 hover:bg-secondary/50 sm:px-6 sm:py-5"
             >
-              <span>{faq.question}</span>
-              <ChevronDown
+              <span
                 className={cn(
-                  "h-5 w-5 shrink-0 text-muted-foreground transition-transform",
-                  open && "rotate-180"
+                  "font-medium leading-snug transition-colors duration-200",
+                  open && "text-primary"
                 )}
-              />
+              >
+                {faq.question}
+              </span>
+              <span
+                className={cn(
+                  "flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-all duration-300 ease-out-expo",
+                  open
+                    ? "rotate-45 bg-primary text-primary-foreground"
+                    : "bg-secondary text-muted-foreground"
+                )}
+              >
+                <Plus className="h-4 w-4" aria-hidden />
+              </span>
             </button>
-            {open && (
-              <div className="whitespace-pre-line border-t px-5 py-4 text-sm text-muted-foreground">
-                {faq.answer}
+
+            {/* Grid-rows trick animates height without measuring the content. */}
+            <div
+              className={cn(
+                "grid transition-all duration-300 ease-out-expo",
+                open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+              )}
+            >
+              <div className="overflow-hidden">
+                <div className="whitespace-pre-line border-t border-border/70 px-5 py-4 text-sm leading-relaxed text-muted-foreground sm:px-6 sm:py-5">
+                  {faq.answer}
+                </div>
               </div>
-            )}
+            </div>
           </div>
         );
       })}

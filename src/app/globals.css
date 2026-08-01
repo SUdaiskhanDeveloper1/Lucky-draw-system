@@ -4,84 +4,270 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 10%;
+    /* Surfaces */
+    --background: 150 22% 98%;
+    --foreground: 160 16% 11%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 10%;
-    --primary: 262 83% 58%;
+    --card-foreground: 160 16% 11%;
+
+    /* Brand */
+    --primary: 153 71% 28%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 5% 96%;
-    --secondary-foreground: 240 6% 20%;
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 4% 46%;
-    --accent: 262 83% 96%;
-    --accent-foreground: 262 83% 40%;
-    --destructive: 0 72% 51%;
+    --accent: 152 52% 94%;
+    --accent-foreground: 154 72% 22%;
+
+    /* Neutrals */
+    --secondary: 152 18% 95%;
+    --secondary-foreground: 160 16% 22%;
+    --muted: 152 16% 95%;
+    --muted-foreground: 158 9% 42%;
+
+    /* Semantic */
+    --destructive: 0 72% 48%;
     --destructive-foreground: 0 0% 100%;
-    --success: 142 71% 45%;
+    --success: 142 68% 34%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
+    --warning: 36 92% 42%;
     --warning-foreground: 0 0% 100%;
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
-    --ring: 262 83% 58%;
-    --radius: 0.75rem;
+    --info: 214 84% 44%;
+    --info-foreground: 0 0% 100%;
+
+    /* Lines & focus */
+    --border: 152 14% 90%;
+    --input: 152 14% 88%;
+    --ring: 153 71% 28%;
+
+    --radius: 0.875rem;
+    --shadow-color: 158 30% 12%;
+
+    /* Chart marks — validated for contrast against the light card surface. */
+    --chart-1: 153 71% 28%;
+    --chart-grid: 152 14% 88%;
   }
 
   .dark {
-    --background: 240 10% 6%;
-    --foreground: 0 0% 96%;
-    --card: 240 8% 10%;
-    --card-foreground: 0 0% 96%;
-    --primary: 262 83% 66%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 240 6% 16%;
-    --secondary-foreground: 0 0% 90%;
-    --muted: 240 6% 16%;
-    --muted-foreground: 240 5% 65%;
-    --accent: 262 40% 20%;
-    --accent-foreground: 262 83% 85%;
-    --destructive: 0 62% 50%;
+    --background: 160 20% 6%;
+    --foreground: 150 12% 96%;
+    --card: 160 18% 9%;
+    --card-foreground: 150 12% 96%;
+
+    --primary: 151 58% 52%;
+    --primary-foreground: 158 84% 7%;
+    --accent: 155 42% 16%;
+    --accent-foreground: 151 62% 76%;
+
+    --secondary: 158 12% 16%;
+    --secondary-foreground: 150 10% 90%;
+    --muted: 158 12% 15%;
+    --muted-foreground: 152 8% 62%;
+
+    --destructive: 0 68% 58%;
     --destructive-foreground: 0 0% 100%;
-    --success: 142 61% 45%;
-    --success-foreground: 0 0% 100%;
-    --warning: 38 92% 55%;
-    --warning-foreground: 0 0% 10%;
-    --border: 240 6% 20%;
-    --input: 240 6% 22%;
-    --ring: 262 83% 66%;
+    --success: 148 55% 50%;
+    --success-foreground: 158 84% 7%;
+    --warning: 40 92% 58%;
+    --warning-foreground: 40 90% 10%;
+    --info: 212 84% 62%;
+    --info-foreground: 214 90% 10%;
+
+    --border: 158 12% 19%;
+    --input: 158 12% 22%;
+    --ring: 151 58% 52%;
+
+    --shadow-color: 160 60% 2%;
+
+    /* Dark-mode marks are re-picked (not a flipped light value) so they sit in
+       the readable lightness band against the dark card surface. */
+    --chart-1: 150 56% 42%;
+    --chart-grid: 158 12% 20%;
   }
 
   * {
     border-color: hsl(var(--border));
   }
 
+  /* Tell the browser which scheme native widgets (date pickers, dropdowns,
+     spinners) should render in — otherwise they stay light in dark mode. */
+  :root {
+    color-scheme: light;
+  }
+  .dark {
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Native checkboxes/radios appear throughout the admin forms. */
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: hsl(var(--primary));
+    width: 1.0625rem;
+    height: 1.0625rem;
+    cursor: pointer;
+  }
+
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Display typography: tighter tracking + balanced wrapping for headings. */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.2);
+    color: hsl(var(--foreground));
+  }
+
+  /* One consistent focus ring for every interactive element. */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
 @layer components {
+  /* ---------- Surfaces ---------- */
+  .card-surface {
+    @apply rounded-2xl border border-border/70 bg-card text-card-foreground shadow-soft;
+  }
+
+  .card-interactive {
+    @apply card-surface transition-all duration-300 ease-out-expo hover:-translate-y-1 hover:border-primary/25 hover:shadow-lift;
+  }
+
+  .glass-surface {
+    @apply border-border/60 bg-background/70 backdrop-blur-xl supports-[backdrop-filter]:bg-background/55;
+  }
+
+  .panel-inset {
+    @apply rounded-xl border border-border/70 bg-muted/50 p-4;
+  }
+
+  /* ---------- Text ---------- */
+  .text-gradient {
+    @apply bg-gradient-to-br from-primary via-brand-500 to-brand-400 bg-clip-text text-transparent;
+  }
+
+  .eyebrow {
+    @apply text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-muted-foreground;
+  }
+
+  /* ---------- Chips ---------- */
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground;
+  }
+
+  .chip-brand {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-accent px-3 py-1.5 text-xs font-semibold text-accent-foreground;
+  }
+
+  /* ---------- Forms ---------- */
+  /* Native select with a themed chevron instead of the OS arrow. */
+  .select-field {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23849c92' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+    background-size: 1.05rem;
+  }
+
+  /* ---------- Loading ---------- */
   .skeleton {
-    @apply relative overflow-hidden rounded-md bg-muted;
+    @apply relative overflow-hidden rounded-lg bg-muted;
   }
   .skeleton::after {
-    @apply absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/10 to-transparent;
+    @apply absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-foreground/10 to-transparent;
     content: "";
   }
-  .card-surface {
-    @apply rounded-xl border bg-card text-card-foreground shadow-sm;
+
+  /* ---------- Page background wash ---------- */
+  .page-wash {
+    @apply bg-mesh-light dark:bg-mesh-dark;
+    background-repeat: no-repeat;
+  }
+
+  /* ---------- Long-form content ---------- */
+  .rich-text {
+    @apply space-y-5 text-[0.975rem] leading-relaxed text-muted-foreground;
+  }
+  .rich-text strong {
+    @apply font-semibold text-foreground;
   }
 }
 
-/* thin scrollbar */
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Staggered reveal helpers for grids and lists. */
+  .stagger > * {
+    animation: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .stagger > *:nth-child(1) {
+    animation-delay: 0.02s;
+  }
+  .stagger > *:nth-child(2) {
+    animation-delay: 0.06s;
+  }
+  .stagger > *:nth-child(3) {
+    animation-delay: 0.1s;
+  }
+  .stagger > *:nth-child(4) {
+    animation-delay: 0.14s;
+  }
+  .stagger > *:nth-child(5) {
+    animation-delay: 0.18s;
+  }
+  .stagger > *:nth-child(6) {
+    animation-delay: 0.22s;
+  }
+}
+
+/* Thin, themed scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--muted-foreground) / 0.35);
+  background: hsl(var(--muted-foreground) / 0.28);
+  border: 3px solid transparent;
+  background-clip: content-box;
   border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.45);
+  background-clip: content-box;
 }

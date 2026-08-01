@@ -53,13 +53,15 @@ export function NotificationBell({
     <Button
       variant="ghost"
       size="icon"
-      aria-label="Notifications"
-      className="relative"
+      aria-label={
+        count > 0 ? `Notifications, ${count} unread` : "Notifications"
+      }
+      className="relative rounded-full"
       onClick={() => router.push("/notifications")}
     >
       <Bell className="h-5 w-5" />
       {count > 0 && (
-        <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold leading-none text-destructive-foreground">
+        <span className="absolute right-0.5 top-0.5 flex h-[1.15rem] min-w-[1.15rem] items-center justify-center rounded-full bg-destructive px-1 text-[0.625rem] font-bold leading-none text-destructive-foreground shadow-soft ring-2 ring-background">
           {count > 9 ? "9+" : count}
         </span>
       )}

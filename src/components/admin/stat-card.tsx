@@ -16,24 +16,28 @@ export function StatCard({
   accent?: "primary" | "success" | "warning" | "destructive" | "muted";
 }) {
   const accentMap: Record<string, string> = {
-    primary: "bg-primary/10 text-primary",
-    success: "bg-success/15 text-success",
-    warning: "bg-warning/15 text-warning",
-    destructive: "bg-destructive/15 text-destructive",
+    primary: "bg-accent text-accent-foreground",
+    success: "bg-success/12 text-success",
+    warning: "bg-warning/12 text-warning",
+    destructive: "bg-destructive/12 text-destructive",
     muted: "bg-muted text-muted-foreground",
   };
 
   return (
-    <div className="card-surface flex items-start justify-between gap-3 p-4">
+    <div className="card-surface group flex items-start justify-between gap-3 p-5 transition-all duration-300 ease-out-expo hover:-translate-y-0.5 hover:shadow-lift">
       <div className="min-w-0">
-        <p className="truncate text-sm text-muted-foreground">{label}</p>
-        <p className="mt-1 text-2xl font-bold tracking-tight">{value}</p>
+        <p className="truncate text-[0.8125rem] font-medium text-muted-foreground">
+          {label}
+        </p>
+        <p className="mt-1.5 font-display text-2xl font-extrabold tabular-nums tracking-tight">
+          {value}
+        </p>
         {(sublabel || trend) && (
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="mt-1.5 text-xs text-muted-foreground">
             {trend && (
               <span
                 className={cn(
-                  "font-medium",
+                  "font-semibold",
                   trend.positive ? "text-success" : "text-destructive"
                 )}
               >
@@ -48,11 +52,11 @@ export function StatCard({
       {Icon && (
         <span
           className={cn(
-            "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
+            "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-transform duration-300 ease-out-expo group-hover:scale-105",
             accentMap[accent]
           )}
         >
-          <Icon className="h-5 w-5" />
+          <Icon className="h-[1.15rem] w-[1.15rem]" />
         </span>
       )}
     </div>

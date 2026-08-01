@@ -45,7 +45,11 @@ export function DashboardShell({
           title={titleFor(pathname)}
           onMenuClick={() => setOpen(true)}
         />
-        <main className="p-4 md:p-6">{children}</main>
+        <main className="page-wash min-h-[calc(100vh-4.5rem)] p-4 md:p-7">
+          <div key={pathname} className="mx-auto max-w-6xl animate-fade-in">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );

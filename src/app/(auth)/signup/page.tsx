@@ -3,12 +3,13 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { MailCheck } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, MailCheck, UserPlus } from "lucide-react";
 import toast from "react-hot-toast";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function SignupForm() {
   const searchParams = useSearchParams();
@@ -20,6 +21,7 @@ function SignupForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -62,18 +64,20 @@ function SignupForm() {
 
   if (submitted) {
     return (
-      <Card>
-        <CardContent className="flex flex-col items-center py-10 text-center">
-          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-success/10">
-            <MailCheck className="h-7 w-7 text-success" />
+      <Card className="shadow-card">
+        <CardContent className="flex flex-col items-center py-12 text-center">
+          <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-success/12 text-success ring-1 ring-inset ring-success/20">
+            <MailCheck className="h-7 w-7" />
           </div>
-          <h2 className="text-xl font-semibold">Verify your email</h2>
-          <p className="mt-2 max-w-sm text-sm text-muted-foreground">
+          <h2 className="font-display text-xl font-bold tracking-tight">
+            Verify your email
+          </h2>
+          <p className="mt-2.5 max-w-sm text-sm leading-relaxed text-muted-foreground">
             We&apos;ve sent a verification link to{" "}
-            <span className="font-medium text-foreground">{email}</span>. Click
-            the link in that email to activate your account.
+            <span className="font-semibold text-foreground">{email}</span>.
+            Click the link in that email to activate your account.
           </p>
-          <Link href="/login" className="mt-6">
+          <Link href="/login" className="mt-7">
             <Button variant="outline">Back to sign in</Button>
           </Link>
         </CardContent>
@@ -82,15 +86,18 @@ function SignupForm() {
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="shadow-card">
+      <CardHeader className="pb-4">
+        <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-accent text-accent-foreground">
+          <UserPlus className="h-5 w-5" aria-hidden />
+        </span>
         <CardTitle className="text-2xl">Create your account</CardTitle>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           Join and start winning for just Rs.1.
         </p>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <Label htmlFor="fullName">Full name</Label>
             <Input
@@ -119,22 +126,37 @@ function SignupForm() {
 
           <div>
             <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              autoComplete="new-password"
-              placeholder="At least 6 characters"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="new-password"
+                placeholder="At least 6 characters"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="pr-11"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 text-muted-foreground transition-colors duration-200 hover:bg-secondary hover:text-foreground"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
           </div>
 
           <div>
             <Label htmlFor="confirmPassword">Confirm password</Label>
             <Input
               id="confirmPassword"
-              type="password"
+              type={showPassword ? "text" : "password"}
               autoComplete="new-password"
               placeholder="Re-enter your password"
               value={confirmPassword}
@@ -143,14 +165,36 @@ function SignupForm() {
             />
           </div>
 
-          <Button type="submit" className="w-full" loading={loading}>
+          <Button
+            type="submit"
+            variant="gradient"
+            size="lg"
+            className="w-full"
+            loading={loading}
+          >
             Create account
+            {!loading && <ArrowRight className="h-4 w-4" />}
           </Button>
+
+          <p className="text-center text-xs leading-relaxed text-muted-foreground">
+            By creating an account you agree to our{" "}
+            <Link href="/terms" className="font-medium text-primary hover:underline">
+              Terms
+            </Link>{" "}
+            and{" "}
+            <Link href="/privacy" className="font-medium text-primary hover:underline">
+              Privacy Policy
+            </Link>
+            .
+          </p>
         </form>
 
-        <p className="mt-6 text-center text-sm text-muted-foreground">
+        <p className="mt-7 text-center text-sm text-muted-foreground">
           Already have an account?{" "}
-          <Link href="/login" className="font-medium text-primary hover:underline">
+          <Link
+            href="/login"
+            className="font-semibold text-primary transition-colors hover:underline"
+          >
             Sign in
           </Link>
         </p>
@@ -159,9 +203,24 @@ function SignupForm() {
   );
 }
 
+function SignupFallback() {
+  return (
+    <Card className="shadow-card">
+      <CardContent className="space-y-5 p-6">
+        <Skeleton className="h-12 w-12 rounded-2xl" />
+        <Skeleton className="h-7 w-52" />
+        <Skeleton className="h-11 w-full rounded-lg" />
+        <Skeleton className="h-11 w-full rounded-lg" />
+        <Skeleton className="h-11 w-full rounded-lg" />
+        <Skeleton className="h-12 w-full rounded-xl" />
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function SignupPage() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<SignupFallback />}>
       <SignupForm />
     </Suspense>
   );

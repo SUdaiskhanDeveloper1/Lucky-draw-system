@@ -1,6 +1,17 @@
 import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
+/** Shared field chrome so inputs, textareas and selects stay visually identical. */
+const fieldBase = [
+  "w-full rounded-lg border border-input bg-card text-sm text-foreground",
+  "placeholder:text-muted-foreground/70",
+  "shadow-xs transition-all duration-200 ease-out-expo",
+  "hover:border-primary/30",
+  "focus-visible:border-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/12",
+  "disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-60",
+  "aria-[invalid=true]:border-destructive aria-[invalid=true]:focus-visible:ring-destructive/15",
+].join(" ");
+
 export const Input = forwardRef<
   HTMLInputElement,
   React.InputHTMLAttributes<HTMLInputElement>
@@ -9,7 +20,9 @@ export const Input = forwardRef<
     type={type}
     ref={ref}
     className={cn(
-      "flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+      fieldBase,
+      "flex h-11 px-3.5 py-2",
+      "file:mr-3 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-secondary-foreground",
       className
     )}
     {...props}
@@ -23,10 +36,7 @@ export const Textarea = forwardRef<
 >(({ className, ...props }, ref) => (
   <textarea
     ref={ref}
-    className={cn(
-      "flex min-h-[90px] w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
-      className
-    )}
+    className={cn(fieldBase, "flex min-h-[110px] resize-y px-3.5 py-2.5 leading-relaxed", className)}
     {...props}
   />
 ));
@@ -38,10 +48,7 @@ export const Select = forwardRef<
 >(({ className, children, ...props }, ref) => (
   <select
     ref={ref}
-    className={cn(
-      "flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
-      className
-    )}
+    className={cn(fieldBase, "select-field flex h-11 cursor-pointer py-2 pl-3.5 pr-10", className)}
     {...props}
   >
     {children}
@@ -55,7 +62,28 @@ export function Label({
 }: React.LabelHTMLAttributes<HTMLLabelElement>) {
   return (
     <label
-      className={cn("mb-1.5 block text-sm font-medium", className)}
+      className={cn(
+        "mb-2 block text-sm font-medium leading-none text-foreground",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
+/** Small helper text rendered under a field. */
+export function FieldHint({
+  className,
+  error,
+  ...props
+}: React.HTMLAttributes<HTMLParagraphElement> & { error?: boolean }) {
+  return (
+    <p
+      className={cn(
+        "mt-1.5 text-xs",
+        error ? "text-destructive" : "text-muted-foreground",
+        className
+      )}
       {...props}
     />
   );

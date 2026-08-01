@@ -40,6 +40,26 @@ function iconFor(type: string) {
   }
 }
 
+/** Tone the icon chip by notification type so the list scans quickly. */
+function toneFor(type: string) {
+  switch (type) {
+    case "payment_approved":
+    case "approved":
+      return "bg-success/12 text-success";
+    case "payment_rejected":
+    case "rejected":
+      return "bg-destructive/12 text-destructive";
+    case "winner":
+    case "win":
+      return "bg-warning/12 text-warning";
+    case "payment":
+    case "payment_submitted":
+      return "bg-info/12 text-info";
+    default:
+      return "bg-accent text-accent-foreground";
+  }
+}
+
 export function NotificationsList({
   initial,
 }: {
@@ -92,10 +112,19 @@ export function NotificationsList({
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
-          {unread > 0 ? `${unread} unread` : "All caught up"}
+          {unread > 0 ? (
+            <>
+              <span className="font-semibold tabular-nums text-foreground">
+                {unread}
+              </span>{" "}
+              unread
+            </>
+          ) : (
+            "All caught up"
+          )}
         </p>
         <Button
           variant="outline"
@@ -108,39 +137,51 @@ export function NotificationsList({
         </Button>
       </div>
 
-      <ul className="space-y-2">
+      <ul className="space-y-2.5">
         {items.map((n) => {
           const Icon = iconFor(n.type);
           const body = (
             <div
               className={cn(
-                "flex gap-3 rounded-xl border p-4 transition-colors",
-                n.is_read ? "bg-card" : "border-primary/30 bg-accent/40"
+                "flex gap-4 rounded-2xl border p-4 text-left transition-all duration-300 ease-out-expo hover:shadow-soft sm:p-5",
+                n.is_read
+                  ? "border-border/70 bg-card"
+                  : "border-primary/25 bg-accent/50"
               )}
             >
               <span
                 className={cn(
-                  "flex h-9 w-9 shrink-0 items-center justify-center rounded-full",
+                  "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
                   n.is_read
                     ? "bg-muted text-muted-foreground"
-                    : "bg-primary/10 text-primary"
+                    : toneFor(n.type)
                 )}
               >
-                <Icon className="h-5 w-5" />
+                <Icon className="h-[1.15rem] w-[1.15rem]" />
               </span>
               <div className="min-w-0 flex-1">
-                <div className="flex items-start justify-between gap-2">
-                  <p className="font-medium">{n.title}</p>
+                <div className="flex items-start justify-between gap-3">
+                  <p
+                    className={cn(
+                      "text-[0.9375rem] leading-snug",
+                      n.is_read ? "font-medium" : "font-semibold"
+                    )}
+                  >
+                    {n.title}
+                  </p>
                   {!n.is_read && (
-                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary" />
+                    <span
+                      aria-label="Unread"
+                      className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary"
+                    />
                   )}
                 </div>
                 {n.body && (
-                  <p className="mt-0.5 text-sm text-muted-foreground">
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                     {n.body}
                   </p>
                 )}
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-2 text-xs text-muted-foreground">
                   {formatDateTime(n.created_at)}
                 </p>
               </div>
@@ -150,7 +191,7 @@ export function NotificationsList({
           return (
             <li key={n.id}>
               {n.link ? (
-                <Link href={n.link} onClick={() => markOne(n)}>
+                <Link href={n.link} onClick={() => markOne(n)} className="block">
                   {body}
                 </Link>
               ) : (

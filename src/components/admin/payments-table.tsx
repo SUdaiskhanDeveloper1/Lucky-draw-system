@@ -11,7 +11,7 @@ import { Select, Textarea, Label } from "@/components/ui/input";
 import { Modal, ConfirmDialog } from "@/components/ui/modal";
 import { Spinner } from "@/components/ui/misc";
 import { createClient } from "@/lib/supabase/client";
-import { formatCurrency, formatDateTime } from "@/lib/utils";
+import { cn, formatCurrency, formatDateTime } from "@/lib/utils";
 import { approvePayment, rejectPayment } from "@/app/actions/admin";
 
 type Row = any;
@@ -94,11 +94,35 @@ export function PaymentsTable({ initial }: { initial: Row[] }) {
       ),
     },
     { key: "campaign", label: "Campaign", render: (p) => p.campaigns?.prize_name ?? "—" },
-    { key: "amount", label: "Amount", render: (p) => formatCurrency(p.amount) },
+    {
+      key: "amount",
+      label: "Amount",
+      render: (p) => (
+        <span className="whitespace-nowrap font-semibold tabular-nums">
+          {formatCurrency(p.amount)}
+        </span>
+      ),
+    },
     { key: "method", label: "Method", render: (p) => <span className="capitalize">{String(p.method).replace("_", " ")}</span> },
-    { key: "transaction_id", label: "Txn ID", render: (p) => p.transaction_id ?? "—" },
+    {
+      key: "transaction_id",
+      label: "Txn ID",
+      render: (p) => (
+        <span className="font-mono text-xs text-muted-foreground">
+          {p.transaction_id ?? "—"}
+        </span>
+      ),
+    },
     { key: "status", label: "Status", render: (p) => <Badge status={p.status} /> },
-    { key: "created_at", label: "Date", render: (p) => formatDateTime(p.created_at) },
+    {
+      key: "created_at",
+      label: "Date",
+      render: (p) => (
+        <span className="whitespace-nowrap text-muted-foreground">
+          {formatDateTime(p.created_at)}
+        </span>
+      ),
+    },
     {
       key: "actions",
       label: "",
@@ -125,17 +149,28 @@ export function PaymentsTable({ initial }: { initial: Row[] }) {
 
   return (
     <>
-      <div className="mb-4 flex flex-wrap gap-2">
+      {/* Segmented status filter */}
+      <div
+        role="tablist"
+        aria-label="Filter payments by status"
+        className="mb-5 inline-flex flex-wrap gap-1 rounded-xl border border-border/70 bg-card p-1 shadow-xs"
+      >
         {FILTERS.map((f) => (
-          <Button
+          <button
             key={f}
-            size="sm"
-            variant={filter === f ? "default" : "outline"}
-            className="capitalize"
+            type="button"
+            role="tab"
+            aria-selected={filter === f}
+            className={cn(
+              "rounded-lg px-4 py-1.5 text-sm font-semibold capitalize transition-all duration-300 ease-out-expo",
+              filter === f
+                ? "bg-primary text-primary-foreground shadow-soft"
+                : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+            )}
             onClick={() => setFilter(f)}
           >
             {f}
-          </Button>
+          </button>
         ))}
       </div>
 

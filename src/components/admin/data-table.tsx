@@ -1,9 +1,18 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { EmptyState, Pagination } from "@/components/ui/misc";
+import {
+  Table,
+  TableWrap,
+  TBody,
+  TD,
+  TH,
+  THead,
+  TR,
+} from "@/components/ui/table";
 
 export type Column<T> = {
   key: string;
@@ -53,7 +62,10 @@ export function DataTable<T extends Record<string, unknown>>({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           {searchable ? (
             <div className="relative w-full sm:max-w-xs">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search
+                className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                aria-hidden
+              />
               <Input
                 value={query}
                 onChange={(e) => {
@@ -61,8 +73,22 @@ export function DataTable<T extends Record<string, unknown>>({
                   setPage(1);
                 }}
                 placeholder={searchPlaceholder}
-                className="pl-9"
+                aria-label={searchPlaceholder}
+                className="pl-10 pr-10"
               />
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setQuery("");
+                    setPage(1);
+                  }}
+                  aria-label="Clear search"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-muted-foreground transition-colors duration-200 hover:bg-secondary hover:text-foreground"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
             </div>
           ) : (
             <span />
@@ -74,35 +100,44 @@ export function DataTable<T extends Record<string, unknown>>({
       {paged.length === 0 ? (
         <EmptyState title="Nothing here" description={emptyMessage} />
       ) : (
-        <div className="card-surface overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
+        <>
+          <TableWrap>
+            <Table>
+              <THead>
+                <tr>
                   {columns.map((c) => (
-                    <th key={c.key} className={`px-4 py-3 font-medium ${c.className ?? ""}`}>
+                    <TH key={c.key} className={c.className}>
                       {c.label}
-                    </th>
+                    </TH>
                   ))}
                 </tr>
-              </thead>
-              <tbody>
+              </THead>
+              <TBody>
                 {paged.map((row, i) => (
-                  <tr
-                    key={(row.id as string) ?? i}
-                    className="border-b last:border-0 hover:bg-muted/30"
-                  >
+                  <TR key={(row.id as string) ?? i}>
                     {columns.map((c) => (
-                      <td key={c.key} className={`px-4 py-3 align-middle ${c.className ?? ""}`}>
+                      <TD key={c.key} className={c.className}>
                         {c.render ? c.render(row) : String(row[c.key] ?? "—")}
-                      </td>
+                      </TD>
                     ))}
-                  </tr>
+                  </TR>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+              </TBody>
+            </Table>
+          </TableWrap>
+
+          <p className="text-xs text-muted-foreground">
+            Showing{" "}
+            <span className="font-semibold tabular-nums text-foreground">
+              {paged.length}
+            </span>{" "}
+            of{" "}
+            <span className="font-semibold tabular-nums text-foreground">
+              {filtered.length}
+            </span>{" "}
+            records
+          </p>
+        </>
       )}
 
       <Pagination page={safePage} pageCount={pageCount} onChange={setPage} />

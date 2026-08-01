@@ -54,11 +54,11 @@ export function ReportsExport() {
         <Card key={r.key}>
           <CardContent className="flex items-center justify-between gap-3 p-5">
             <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent text-accent-foreground">
                 <FileText className="h-5 w-5" />
               </span>
               <div>
-                <p className="font-medium">{r.label}</p>
+                <p className="font-semibold">{r.label}</p>
                 <p className="text-xs text-muted-foreground">Export as CSV</p>
               </div>
             </div>
@@ -72,11 +72,11 @@ export function ReportsExport() {
       <Card>
         <CardContent className="flex items-center justify-between gap-3 p-5">
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-success/15 text-success">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-success/12 text-success">
               <FileText className="h-5 w-5" />
             </span>
             <div>
-              <p className="font-medium">Revenue</p>
+              <p className="font-semibold">Revenue</p>
               <p className="text-xs text-muted-foreground">Monthly summary CSV</p>
             </div>
           </div>

@@ -27,7 +27,7 @@ export default async function PublicLayout({
   const str = (v: unknown) => (typeof v === "string" ? v : null);
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="page-wash flex min-h-screen flex-col">
       <Navbar siteName={siteName} />
       <main className="flex-1">{children}</main>
       <Footer

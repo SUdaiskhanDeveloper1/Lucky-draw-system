@@ -4,10 +4,10 @@ export const dynamic = "force-dynamic";
 
 export default function AdminReportsPage() {
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Reports</h1>
-        <p className="text-sm text-muted-foreground">
+        <h1 className="font-display text-2xl font-extrabold tracking-tight">Reports</h1>
+        <p className="mt-1.5 text-sm text-muted-foreground">
           Export platform data as CSV (open in Excel / Google Sheets)
         </p>
       </div>

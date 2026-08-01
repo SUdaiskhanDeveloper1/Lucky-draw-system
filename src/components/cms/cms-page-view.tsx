@@ -1,3 +1,4 @@
+import { CalendarClock } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import type { CmsPage } from "@/lib/types/database";
 import { formatDate } from "@/lib/utils";
@@ -23,23 +24,31 @@ export async function CmsPageView({
   const content = page?.content || fallbackContent;
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h1>
-      {page?.updated_at && (
-        <p className="mt-2 text-sm text-muted-foreground">
-          Last updated {formatDate(page.updated_at)}
-        </p>
-      )}
-      <div className="mt-8 space-y-4 leading-relaxed text-muted-foreground">
-        {content
-          .split(/\n{2,}/)
-          .filter((p) => p.trim())
-          .map((para, i) => (
-            <p key={i} className="whitespace-pre-line">
-              {para}
+    <>
+      <article className="mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-20">
+        <header className="border-b border-border/70 pb-8">
+          <h1 className="font-display text-3xl font-extrabold tracking-tight sm:text-[2.5rem] sm:leading-[1.1]">
+            {title}
+          </h1>
+          {page?.updated_at && (
+            <p className="mt-4 inline-flex items-center gap-2 text-sm text-muted-foreground">
+              <CalendarClock className="h-4 w-4" aria-hidden />
+              Last updated {formatDate(page.updated_at)}
             </p>
-          ))}
-      </div>
-    </div>
+          )}
+        </header>
+
+        <div className="rich-text mt-8">
+          {content
+            .split(/\n{2,}/)
+            .filter((p) => p.trim())
+            .map((para, i) => (
+              <p key={i} className="whitespace-pre-line">
+                {para}
+              </p>
+            ))}
+        </div>
+      </article>
+    </>
   );
 }

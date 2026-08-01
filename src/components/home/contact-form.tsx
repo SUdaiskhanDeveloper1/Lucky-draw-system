@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Send } from "lucide-react";
 import toast from "react-hot-toast";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -37,27 +38,29 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <Label htmlFor="contact-name">Name</Label>
-        <Input
-          id="contact-name"
-          placeholder="Your name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-      </div>
-      <div>
-        <Label htmlFor="contact-email">Email</Label>
-        <Input
-          id="contact-email"
-          type="email"
-          placeholder="you@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="grid gap-5 sm:grid-cols-2">
+        <div>
+          <Label htmlFor="contact-name">Name</Label>
+          <Input
+            id="contact-name"
+            placeholder="Your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <Label htmlFor="contact-email">Email</Label>
+          <Input
+            id="contact-email"
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
       </div>
       <div>
         <Label htmlFor="contact-message">Message</Label>
@@ -69,9 +72,19 @@ export function ContactForm() {
           required
         />
       </div>
-      <Button type="submit" className="w-full sm:w-auto" loading={loading}>
-        Send message
-      </Button>
+      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <Button
+          type="submit"
+          className="w-full sm:w-auto"
+          loading={loading}
+        >
+          {!loading && <Send className="h-4 w-4" />}
+          Send message
+        </Button>
+        <p className="text-xs text-muted-foreground">
+          We usually reply within one business day.
+        </p>
+      </div>
     </form>
   );
 }

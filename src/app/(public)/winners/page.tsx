@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import { PageHeader } from "@/components/ui/misc";
 import {
   WinnersSection,
   type WinnerWithRelations,
@@ -22,17 +23,15 @@ export default async function WinnersPage() {
   const winners = (data ?? []) as unknown as WinnerWithRelations[];
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          Our Winners
-        </h1>
-        <p className="mt-2 text-muted-foreground">
-          Real people winning real prizes for just Rs.1.
-        </p>
+    <>
+      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+        <PageHeader
+          eyebrow="Hall of fame"
+          title="Our Winners"
+          subtitle="Real people winning real prizes for just Rs.1."
+        />
+        <WinnersSection winners={winners} />
       </div>
-
-      <WinnersSection winners={winners} />
-    </div>
+    </>
   );
 }

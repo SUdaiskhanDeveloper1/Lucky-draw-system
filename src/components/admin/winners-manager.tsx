@@ -11,6 +11,15 @@ import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { Modal, ConfirmDialog } from "@/components/ui/modal";
 import { EmptyState } from "@/components/ui/misc";
+import {
+  Table,
+  TableWrap,
+  TBody,
+  TD,
+  TH,
+  THead,
+  TR,
+} from "@/components/ui/table";
 import { createClient } from "@/lib/supabase/client";
 import { formatDateTime } from "@/lib/utils";
 import { drawWinners } from "@/app/actions/admin";
@@ -137,38 +146,42 @@ export function WinnersManager({
         {winners.length === 0 ? (
           <EmptyState title="No winners drawn yet" />
         ) : (
-          <div className="card-surface overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b bg-muted/40 text-left text-xs uppercase text-muted-foreground">
-                    <th className="px-4 py-3 font-medium">Winner</th>
-                    <th className="px-4 py-3 font-medium">Prize</th>
-                    <th className="px-4 py-3 font-medium">Ticket</th>
-                    <th className="px-4 py-3 font-medium">Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {winners.map((w) => (
-                    <tr key={w.id} className="border-b last:border-0">
-                      <td className="px-4 py-3">
+          <TableWrap>
+            <Table>
+              <THead>
+                <tr>
+                  <TH>Winner</TH>
+                  <TH>Prize</TH>
+                  <TH>Ticket</TH>
+                  <TH>Date</TH>
+                </tr>
+              </THead>
+              <TBody>
+                {winners.map((w) => (
+                  <TR key={w.id}>
+                    <TD>
+                      <span className="inline-flex items-center gap-2 font-medium">
+                        <Crown
+                          className="h-3.5 w-3.5 shrink-0 text-warning"
+                          aria-hidden
+                        />
                         {w.profiles?.full_name ?? w.profiles?.email ?? "—"}
-                      </td>
-                      <td className="px-4 py-3 text-muted-foreground">
-                        {w.prize_name ?? w.campaigns?.prize_name ?? "—"}
-                      </td>
-                      <td className="px-4 py-3 font-mono text-xs">
-                        {w.tickets?.ticket_number ?? "—"}
-                      </td>
-                      <td className="px-4 py-3 text-muted-foreground">
-                        {formatDateTime(w.announced_at ?? w.created_at)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+                      </span>
+                    </TD>
+                    <TD className="text-muted-foreground">
+                      {w.prize_name ?? w.campaigns?.prize_name ?? "—"}
+                    </TD>
+                    <TD className="font-mono text-xs">
+                      {w.tickets?.ticket_number ?? "—"}
+                    </TD>
+                    <TD className="whitespace-nowrap text-muted-foreground">
+                      {formatDateTime(w.announced_at ?? w.created_at)}
+                    </TD>
+                  </TR>
+                ))}
+              </TBody>
+            </Table>
+          </TableWrap>
         )}
       </div>
 

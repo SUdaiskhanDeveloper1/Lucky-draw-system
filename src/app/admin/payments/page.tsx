@@ -11,10 +11,10 @@ export default async function AdminPaymentsPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Payment Management</h1>
-        <p className="text-sm text-muted-foreground">
+        <h1 className="font-display text-2xl font-extrabold tracking-tight">Payment Management</h1>
+        <p className="mt-1.5 text-sm text-muted-foreground">
           Review, approve or reject payment submissions
         </p>
       </div>

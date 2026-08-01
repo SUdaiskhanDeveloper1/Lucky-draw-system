@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { AdminSidebar } from "./sidebar";
 import { AdminTopbar } from "./topbar";
 
@@ -16,13 +17,18 @@ export function AdminShell({
   email?: string | null;
 }) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <div className="flex min-h-screen bg-background">
       <AdminSidebar open={open} onClose={() => setOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <AdminTopbar onMenu={() => setOpen(true)} email={email} />
-        <main className="flex-1 p-4 md:p-6">{children}</main>
+        <main className="page-wash flex-1 p-4 md:p-7">
+          <div key={pathname} className="animate-fade-in">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );

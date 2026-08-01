@@ -11,9 +11,15 @@ import {
   Ticket as TicketIcon,
   Crown,
   BadgeCheck,
+  ArrowUpRight,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { formatCurrency, formatDate, formatDateTime } from "@/lib/utils";
+import {
+  formatCurrency,
+  formatDate,
+  formatDateTime,
+  initials,
+} from "@/lib/utils";
 import { StatCard } from "@/components/admin/stat-card";
 import { RevenueChart, RegistrationsChart } from "@/components/admin/admin-charts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -155,51 +161,59 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
         {stats.map((s) => (
           <StatCard key={s.label} {...s} />
         ))}
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-5 lg:grid-cols-2">
         <RevenueChart data={months.map(({ month, revenue }) => ({ month, revenue }))} />
         <RegistrationsChart data={days.map(({ day, count }) => ({ day, count }))} />
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-3">
+      <div className="grid gap-5 xl:grid-cols-3">
         {/* Latest payments */}
         <Card className="xl:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base">Latest Payments</CardTitle>
-            <Link href="/admin/payments" className="text-sm text-primary hover:underline">
-              View all
+            <Link
+              href="/admin/payments"
+              className="inline-flex items-center gap-1 text-sm font-medium text-primary transition-colors hover:underline"
+            >
+              View all <ArrowUpRight className="h-3.5 w-3.5" />
             </Link>
           </CardHeader>
           <CardContent className="pt-0">
             {latestPayments?.length ? (
-              <div className="overflow-x-auto">
+              <div className="-mx-2 overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b text-left text-xs uppercase text-muted-foreground">
-                      <th className="py-2 pr-3 font-medium">User</th>
-                      <th className="py-2 pr-3 font-medium">Campaign</th>
-                      <th className="py-2 pr-3 font-medium">Amount</th>
-                      <th className="py-2 pr-3 font-medium">Status</th>
+                    <tr className="border-b border-border/70 text-left text-[0.6875rem] uppercase tracking-[0.08em] text-muted-foreground">
+                      <th className="px-2 py-2.5 font-semibold">User</th>
+                      <th className="px-2 py-2.5 font-semibold">Campaign</th>
+                      <th className="px-2 py-2.5 font-semibold">Amount</th>
+                      <th className="px-2 py-2.5 text-right font-semibold">
+                        Status
+                      </th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-border/60">
                     {(latestPayments as any[]).map((p) => (
-                      <tr key={p.id} className="border-b last:border-0">
-                        <td className="py-2 pr-3">
+                      <tr
+                        key={p.id}
+                        className="transition-colors duration-200 hover:bg-secondary/50"
+                      >
+                        <td className="px-2 py-3 font-medium">
                           {p.profiles?.full_name ?? p.profiles?.email ?? "—"}
                         </td>
-                        <td className="py-2 pr-3 text-muted-foreground">
+                        <td className="px-2 py-3 text-muted-foreground">
                           {p.campaigns?.prize_name ?? "—"}
                         </td>
-                        <td className="py-2 pr-3 font-medium">
+                        <td className="whitespace-nowrap px-2 py-3 font-semibold tabular-nums">
                           {formatCurrency(p.amount)}
                         </td>
-                        <td className="py-2 pr-3">
+                        <td className="px-2 py-3 text-right">
                           <Badge status={p.status} />
                         </td>
                       </tr>
@@ -217,25 +231,40 @@ export default async function AdminDashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base">Latest Users</CardTitle>
-            <Link href="/admin/users" className="text-sm text-primary hover:underline">
-              View all
+            <Link
+              href="/admin/users"
+              className="inline-flex items-center gap-1 text-sm font-medium text-primary transition-colors hover:underline"
+            >
+              View all <ArrowUpRight className="h-3.5 w-3.5" />
             </Link>
           </CardHeader>
-          <CardContent className="space-y-3 pt-0">
+          <CardContent className="pt-0">
             {latestUsers?.length ? (
-              (latestUsers as any[]).map((u) => (
-                <div key={u.id} className="flex items-center justify-between gap-2">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">
-                      {u.full_name ?? "Unnamed"}
-                    </p>
-                    <p className="truncate text-xs text-muted-foreground">{u.email}</p>
-                  </div>
-                  <span className="shrink-0 text-xs text-muted-foreground">
-                    {formatDate(u.created_at)}
-                  </span>
-                </div>
-              ))
+              <ul className="divide-y divide-border/60">
+                {(latestUsers as any[]).map((u) => (
+                  <li
+                    key={u.id}
+                    className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
+                  >
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent text-[0.6875rem] font-bold text-accent-foreground">
+                        {initials(u.full_name ?? u.email)}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold">
+                          {u.full_name ?? "Unnamed"}
+                        </p>
+                        <p className="truncate text-xs text-muted-foreground">
+                          {u.email}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="shrink-0 text-xs text-muted-foreground">
+                      {formatDate(u.created_at)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             ) : (
               <EmptyState title="No users yet" />
             )}
@@ -247,31 +276,43 @@ export default async function AdminDashboardPage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-base">Latest Winners</CardTitle>
-          <Link href="/admin/winners" className="text-sm text-primary hover:underline">
-            View all
+          <Link
+            href="/admin/winners"
+            className="inline-flex items-center gap-1 text-sm font-medium text-primary transition-colors hover:underline"
+          >
+            View all <ArrowUpRight className="h-3.5 w-3.5" />
           </Link>
         </CardHeader>
         <CardContent className="pt-0">
           {latestWinners?.length ? (
-            <div className="overflow-x-auto">
+            <div className="-mx-2 overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b text-left text-xs uppercase text-muted-foreground">
-                    <th className="py-2 pr-3 font-medium">Winner</th>
-                    <th className="py-2 pr-3 font-medium">Prize</th>
-                    <th className="py-2 pr-3 font-medium">Announced</th>
+                  <tr className="border-b border-border/70 text-left text-[0.6875rem] uppercase tracking-[0.08em] text-muted-foreground">
+                    <th className="px-2 py-2.5 font-semibold">Winner</th>
+                    <th className="px-2 py-2.5 font-semibold">Prize</th>
+                    <th className="px-2 py-2.5 font-semibold">Announced</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-border/60">
                   {(latestWinners as any[]).map((w) => (
-                    <tr key={w.id} className="border-b last:border-0">
-                      <td className="py-2 pr-3">
-                        {w.profiles?.full_name ?? w.profiles?.email ?? "—"}
+                    <tr
+                      key={w.id}
+                      className="transition-colors duration-200 hover:bg-secondary/50"
+                    >
+                      <td className="px-2 py-3">
+                        <span className="inline-flex items-center gap-2 font-medium">
+                          <Crown
+                            className="h-3.5 w-3.5 shrink-0 text-warning"
+                            aria-hidden
+                          />
+                          {w.profiles?.full_name ?? w.profiles?.email ?? "—"}
+                        </span>
                       </td>
-                      <td className="py-2 pr-3 text-muted-foreground">
+                      <td className="px-2 py-3 text-muted-foreground">
                         {w.prize_name ?? w.campaigns?.prize_name ?? "—"}
                       </td>
-                      <td className="py-2 pr-3 text-muted-foreground">
+                      <td className="whitespace-nowrap px-2 py-3 text-muted-foreground">
                         {formatDateTime(w.announced_at ?? w.created_at)}
                       </td>
                     </tr>

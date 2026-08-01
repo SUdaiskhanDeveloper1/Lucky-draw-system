@@ -51,11 +51,11 @@ export function UsersTable({ initial }: { initial: Profile[] }) {
       label: "User",
       render: (u) => (
         <div className="flex items-center gap-3">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent text-xs font-bold text-accent-foreground">
             {initials(u.full_name)}
           </span>
           <div className="min-w-0">
-            <p className="truncate font-medium">{u.full_name ?? "Unnamed"}</p>
+            <p className="truncate font-semibold">{u.full_name ?? "Unnamed"}</p>
             <p className="truncate text-xs text-muted-foreground">{u.email}</p>
           </div>
         </div>

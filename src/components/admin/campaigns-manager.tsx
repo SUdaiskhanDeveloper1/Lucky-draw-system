@@ -262,7 +262,7 @@ export function CampaignsManager({ initial }: { initial: Campaign[] }) {
             </div>
           </div>
 
-          <label className="flex items-center gap-2 text-sm">
+          <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-border/70 bg-muted/40 px-4 py-3 text-sm font-medium transition-colors duration-200 hover:bg-muted/70">
             <input
               type="checkbox"
               checked={form.is_featured}

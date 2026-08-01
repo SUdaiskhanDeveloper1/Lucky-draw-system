@@ -6,6 +6,7 @@ import {
   Trophy,
   Wallet as WalletIcon,
   ArrowRight,
+  Sparkles,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { formatCurrency, formatDate, initials } from "@/lib/utils";
@@ -89,21 +90,21 @@ export default async function DashboardPage() {
       value: totalTickets,
       icon: TicketIcon,
       color: "text-primary",
-      bg: "bg-primary/10",
+      bg: "bg-accent",
     },
     {
       label: "Payments",
       value: totalPayments,
       icon: Receipt,
-      color: "text-accent-foreground",
-      bg: "bg-accent",
+      color: "text-info",
+      bg: "bg-info/12",
     },
     {
       label: "Total Wins",
       value: totalWins,
       icon: Trophy,
-      color: "text-success",
-      bg: "bg-success/10",
+      color: "text-warning",
+      bg: "bg-warning/12",
     },
     // {
     //   label: "Wallet Balance",
@@ -115,57 +116,74 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-7">
       {/* Welcome card */}
-      <Card>
-        <CardContent className="flex flex-col gap-4 pt-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="relative overflow-hidden rounded-2xl bg-brand-gradient p-6 text-primary-foreground shadow-card sm:p-8">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -bottom-24 left-1/3 h-56 w-56 rounded-full bg-black/15 blur-3xl"
+        />
+        <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             {profile?.avatar_url ? (
               <Image
                 src={profile.avatar_url}
                 alt={profile.full_name ?? "Avatar"}
-                width={56}
-                height={56}
-                className="h-14 w-14 rounded-full object-cover"
+                width={64}
+                height={64}
+                className="h-16 w-16 rounded-2xl object-cover ring-2 ring-white/25"
               />
             ) : (
-              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-lg font-semibold text-primary-foreground">
+              <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 font-display text-xl font-bold backdrop-blur">
                 {initials(profile?.full_name)}
               </span>
             )}
-            <div>
-              <h2 className="text-xl font-semibold">
-                Welcome back, {profile?.full_name ?? "there"} 👋
+            <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-primary-foreground/70">
+                Welcome back
+              </p>
+              <h2 className="truncate font-display text-2xl font-extrabold tracking-tight">
+                {profile?.full_name ?? "there"} 👋
               </h2>
-              <p className="text-sm text-muted-foreground">
+              <p className="truncate text-sm text-primary-foreground/80">
                 {profile?.email}
                 {profile?.phone ? ` • ${profile.phone}` : ""}
               </p>
             </div>
           </div>
-          {/* <div className="flex items-center gap-3">
-            {profile?.status && <Badge status={profile.status} />}
-            <div className="rounded-lg border bg-muted px-4 py-2 text-right">
-              <p className="text-xs text-muted-foreground">Wallet</p>
-              <p className="font-semibold">{formatCurrency(balance)}</p>
-            </div>
-          </div> */}
-        </CardContent>
-      </Card>
+          <Link href="/campaigns" className="shrink-0">
+            <Button
+              variant="secondary"
+              className="w-full bg-white text-brand-700 hover:bg-white/90 sm:w-auto"
+            >
+              <Sparkles className="h-4 w-4" /> Browse campaigns
+            </Button>
+          </Link>
+        </div>
+      </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {stats.map((s) => {
           const Icon = s.icon;
           return (
-            <div key={s.label} className="card-surface p-5">
-              <div className="flex items-center justify-between">
-                <span className={`rounded-lg p-2 ${s.bg}`}>
-                  <Icon className={`h-5 w-5 ${s.color}`} />
-                </span>
-              </div>
-              <p className="mt-3 text-2xl font-bold">{s.value}</p>
-              <p className="text-sm text-muted-foreground">{s.label}</p>
+            <div
+              key={s.label}
+              className="card-surface p-5 transition-all duration-300 ease-out-expo hover:-translate-y-1 hover:shadow-lift"
+            >
+              <span
+                className={`inline-flex h-11 w-11 items-center justify-center rounded-xl ${s.bg}`}
+              >
+                <Icon className={`h-5 w-5 ${s.color}`} />
+              </span>
+              <p className="mt-4 font-display text-3xl font-extrabold tabular-nums tracking-tight">
+                {s.value}
+              </p>
+              <p className="mt-0.5 text-sm text-muted-foreground">{s.label}</p>
             </div>
           );
         })}
@@ -190,19 +208,24 @@ export default async function DashboardPage() {
                 icon={TicketIcon}
               />
             ) : (
-              <ul className="divide-y">
+              <ul className="divide-y divide-border/60">
                 {recentTickets.map((t) => (
                   <li
                     key={t.id}
-                    className="flex items-center justify-between py-3"
+                    className="flex items-center justify-between gap-3 py-3.5 first:pt-0 last:pb-0"
                   >
-                    <div className="min-w-0">
-                      <p className="truncate font-medium">
-                        {t.campaigns?.prize_name ?? "Campaign"}
-                      </p>
-                      <p className="font-mono text-xs text-muted-foreground">
-                        {t.ticket_number}
-                      </p>
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+                        <TicketIcon className="h-4 w-4" />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold">
+                          {t.campaigns?.prize_name ?? "Campaign"}
+                        </p>
+                        <p className="truncate font-mono text-xs text-muted-foreground">
+                          {t.ticket_number}
+                        </p>
+                      </div>
                     </div>
                     <Badge status={t.status} />
                   </li>
@@ -229,19 +252,25 @@ export default async function DashboardPage() {
                 icon={Receipt}
               />
             ) : (
-              <ul className="divide-y">
+              <ul className="divide-y divide-border/60">
                 {recentPayments.map((p) => (
                   <li
                     key={p.id}
-                    className="flex items-center justify-between py-3"
+                    className="flex items-center justify-between gap-3 py-3.5 first:pt-0 last:pb-0"
                   >
-                    <div className="min-w-0">
-                      <p className="truncate font-medium">
-                        {formatCurrency(p.amount)}
-                      </p>
-                      <p className="text-xs capitalize text-muted-foreground">
-                        {p.method.replace("_", " ")} • {formatDate(p.created_at)}
-                      </p>
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-info/12 text-info">
+                        <Receipt className="h-4 w-4" />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold tabular-nums">
+                          {formatCurrency(p.amount)}
+                        </p>
+                        <p className="truncate text-xs capitalize text-muted-foreground">
+                          {p.method.replace("_", " ")} •{" "}
+                          {formatDate(p.created_at)}
+                        </p>
+                      </div>
                     </div>
                     <Badge status={p.status} />
                   </li>
@@ -254,8 +283,10 @@ export default async function DashboardPage() {
 
       {/* Active campaigns */}
       <div>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Active Campaigns</h2>
+        <div className="mb-5 flex items-center justify-between gap-4">
+          <h2 className="font-display text-xl font-bold tracking-tight">
+            Active Campaigns
+          </h2>
           <Link href="/campaigns">
             <Button variant="ghost" size="sm">
               Browse all <ArrowRight className="h-4 w-4" />
@@ -269,7 +300,7 @@ export default async function DashboardPage() {
             icon={Trophy}
           />
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="stagger grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {campaigns.map((c) => (
               <CampaignCard key={c.id} campaign={c} />
             ))}

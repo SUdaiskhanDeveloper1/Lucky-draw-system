@@ -14,10 +14,10 @@ export default async function AdminSettingsPage() {
   for (const s of settings ?? []) byKey[s.key] = s.value ?? {};
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Settings</h1>
-        <p className="text-sm text-muted-foreground">
+        <h1 className="font-display text-2xl font-extrabold tracking-tight">Settings</h1>
+        <p className="mt-1.5 text-sm text-muted-foreground">
           Configure your platform
         </p>
       </div>

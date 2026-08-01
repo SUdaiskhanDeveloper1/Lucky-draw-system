@@ -1,9 +1,17 @@
 import { Receipt } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/misc";
+import {
+  Table,
+  TableWrap,
+  TBody,
+  TD,
+  TH,
+  THead,
+  TR,
+} from "@/components/ui/table";
 import { ReceiptLink } from "@/components/dashboard/receipt-link";
 import type { Payment } from "@/lib/types/database";
 
@@ -36,70 +44,72 @@ export default async function PaymentsPage() {
   }
 
   return (
-    <div className="space-y-4">
-      <Card>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b text-left text-muted-foreground">
-                  <th className="px-4 py-3 font-medium">Date</th>
-                  <th className="px-4 py-3 font-medium">Campaign</th>
-                  <th className="px-4 py-3 font-medium">Amount</th>
-                  <th className="px-4 py-3 font-medium">Method</th>
-                  {/* <th className="px-4 py-3 font-medium">Txn ID</th> */}
-                  <th className="px-4 py-3 font-medium">Receipt no</th>
-                  <th className="px-4 py-3 font-medium">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {payments.map((p) => (
-                  <tr key={p.id} className="align-top hover:bg-secondary/50">
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {formatDate(p.created_at)}
-                    </td>
-                    <td className="px-4 py-3">
-                      {p.campaigns?.prize_name ?? "—"}
-                    </td>
-                    <td className="px-4 py-3 font-medium">
-                      {formatCurrency(p.amount)}
-                      {p.discount > 0 && (
-                        <span className="ml-1 text-xs text-success">
-                          (-{formatCurrency(p.discount)})
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 capitalize">
-                      {p.method.replace("_", " ")}
-                    </td>
-                    <td className="px-4 py-3 font-mono text-xs">
-                      {p.transaction_id ?? "—"}
-                    </td>
-                    {/* <td className="px-4 py-3">
-                      <ReceiptLink path={p.receipt_url} />
-                    </td> */}
-                    <td className="px-4 py-3">
-                      <div className="space-y-1">
-                        <Badge status={p.status} />
-                        {p.status === "rejected" && p.admin_note && (
-                          <p className="max-w-[200px] text-xs text-destructive">
-                            {p.admin_note}
-                          </p>
-                        )}
-                        {p.status === "approved" && p.admin_note && (
-                          <p className="max-w-[200px] text-xs text-muted-foreground">
-                            {p.admin_note}
-                          </p>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="space-y-5">
+      <p className="text-sm text-muted-foreground">
+        Showing{" "}
+        <span className="font-semibold tabular-nums text-foreground">
+          {payments.length}
+        </span>{" "}
+        {payments.length === 1 ? "payment" : "payments"}.
+      </p>
+
+      <TableWrap>
+        <Table>
+          <THead>
+            <tr>
+              <TH>Date</TH>
+              <TH>Campaign</TH>
+              <TH>Amount</TH>
+              <TH>Method</TH>
+              {/* <TH>Txn ID</TH> */}
+              <TH>Receipt no</TH>
+              <TH className="text-right">Status</TH>
+            </tr>
+          </THead>
+          <TBody>
+            {payments.map((p) => (
+              <TR key={p.id} className="align-top">
+                <TD className="whitespace-nowrap text-muted-foreground">
+                  {formatDate(p.created_at)}
+                </TD>
+                <TD className="font-medium">
+                  {p.campaigns?.prize_name ?? "—"}
+                </TD>
+                <TD className="whitespace-nowrap font-semibold tabular-nums">
+                  {formatCurrency(p.amount)}
+                  {p.discount > 0 && (
+                    <span className="ml-1.5 text-xs font-medium text-success">
+                      (-{formatCurrency(p.discount)})
+                    </span>
+                  )}
+                </TD>
+                <TD className="capitalize">{p.method.replace("_", " ")}</TD>
+                <TD className="font-mono text-xs text-muted-foreground">
+                  {p.transaction_id ?? "—"}
+                </TD>
+                {/* <TD>
+                  <ReceiptLink path={p.receipt_url} />
+                </TD> */}
+                <TD className="text-right">
+                  <div className="flex flex-col items-end gap-1.5">
+                    <Badge status={p.status} />
+                    {p.status === "rejected" && p.admin_note && (
+                      <p className="max-w-[220px] text-xs leading-relaxed text-destructive">
+                        {p.admin_note}
+                      </p>
+                    )}
+                    {p.status === "approved" && p.admin_note && (
+                      <p className="max-w-[220px] text-xs leading-relaxed text-muted-foreground">
+                        {p.admin_note}
+                      </p>
+                    )}
+                  </div>
+                </TD>
+              </TR>
+            ))}
+          </TBody>
+        </Table>
+      </TableWrap>
     </div>
   );
 }

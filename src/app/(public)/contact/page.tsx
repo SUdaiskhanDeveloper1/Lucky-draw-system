@@ -11,6 +11,8 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import type { Setting } from "@/lib/types/database";
 import { ContactForm } from "@/components/home/contact-form";
+import { ContactRow } from "@/components/shared/contact-row";
+import { PageHeader } from "@/components/ui/misc";
 
 export const dynamic = "force-dynamic";
 
@@ -50,118 +52,83 @@ export default async function ContactPage() {
   ].filter((s) => s.href);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          Contact Us
-        </h1>
-        <p className="mt-2 text-muted-foreground">
-          Questions, feedback, or need help? We&apos;re here for you.
-        </p>
-      </div>
+    <>
+      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+        <PageHeader
+          eyebrow="Support"
+          title="Contact Us"
+          subtitle="Questions, feedback, or need help? We're here for you."
+        />
 
-      <div className="grid gap-8 lg:grid-cols-2">
-        <div className="card-surface p-6 sm:p-8">
-          <h2 className="mb-4 text-lg font-semibold">Send a message</h2>
-          <ContactForm />
-        </div>
-
-        <div className="space-y-5">
-          {email && (
-            <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-accent text-accent-foreground">
-                <Mail className="h-5 w-5" />
-              </span>
-              <div>
-                <p className="text-xs uppercase text-muted-foreground">Email</p>
-                <a
-                  href={`mailto:${email}`}
-                  className="font-medium hover:text-primary"
-                >
-                  {email}
-                </a>
-              </div>
-            </div>
-          )}
-          {phone && (
-            <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-accent text-accent-foreground">
-                <Phone className="h-5 w-5" />
-              </span>
-              <div>
-                <p className="text-xs uppercase text-muted-foreground">Phone</p>
-                <a
-                  href={`tel:${phone}`}
-                  className="font-medium hover:text-primary"
-                >
-                  {phone}
-                </a>
-              </div>
-            </div>
-          )}
-          {whatsapp && (
-            <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-accent text-accent-foreground">
-                <MessageCircle className="h-5 w-5" />
-              </span>
-              <div>
-                <p className="text-xs uppercase text-muted-foreground">
-                  WhatsApp
-                </p>
-                <a
-                  href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, "")}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-medium hover:text-primary"
-                >
-                  {whatsapp}
-                </a>
-              </div>
-            </div>
-          )}
-          {address && (
-            <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-accent text-accent-foreground">
-                <MapPin className="h-5 w-5" />
-              </span>
-              <div>
-                <p className="text-xs uppercase text-muted-foreground">
-                  Address
-                </p>
-                <p className="font-medium">{address}</p>
-              </div>
-            </div>
-          )}
-
-          {socials.length > 0 && (
-            <div className="pt-2">
-              <p className="mb-3 text-xs uppercase text-muted-foreground">
-                Follow us
-              </p>
-              <div className="flex gap-3">
-                {socials.map(({ href, icon: Icon, label }) => (
-                  <a
-                    key={label}
-                    href={href as string}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={label}
-                    className="flex h-10 w-10 items-center justify-center rounded-full border bg-background text-muted-foreground transition-colors hover:border-primary hover:text-primary"
-                  >
-                    <Icon className="h-5 w-5" />
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {!email && !phone && !whatsapp && !address && (
-            <p className="text-sm text-muted-foreground">
-              Fill out the form and our team will reach out to you shortly.
+        <div className="grid gap-8 lg:grid-cols-5">
+          <div className="card-surface p-6 sm:p-8 lg:col-span-3">
+            <h2 className="font-display text-lg font-bold tracking-tight">
+              Send a message
+            </h2>
+            <p className="mb-6 mt-1 text-sm text-muted-foreground">
+              Fill in the form and our team will get back to you.
             </p>
-          )}
+            <ContactForm />
+          </div>
+
+          <div className="space-y-3 lg:col-span-2">
+            {email && (
+              <ContactRow
+                icon={Mail}
+                label="Email"
+                value={email}
+                href={`mailto:${email}`}
+              />
+            )}
+            {phone && (
+              <ContactRow
+                icon={Phone}
+                label="Phone"
+                value={phone}
+                href={`tel:${phone}`}
+              />
+            )}
+            {whatsapp && (
+              <ContactRow
+                icon={MessageCircle}
+                label="WhatsApp"
+                value={whatsapp}
+                href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, "")}`}
+                external
+              />
+            )}
+            {address && (
+              <ContactRow icon={MapPin} label="Address" value={address} />
+            )}
+
+            {socials.length > 0 && (
+              <div className="card-surface p-5">
+                <p className="eyebrow mb-3.5">Follow us</p>
+                <div className="flex gap-2.5">
+                  {socials.map(({ href, icon: Icon, label }) => (
+                    <a
+                      key={label}
+                      href={href as string}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={label}
+                      className="flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-background text-muted-foreground transition-all duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-primary/30 hover:bg-accent hover:text-primary hover:shadow-soft"
+                    >
+                      <Icon className="h-[1.15rem] w-[1.15rem]" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {!email && !phone && !whatsapp && !address && (
+              <div className="card-surface p-6 text-sm leading-relaxed text-muted-foreground">
+                Fill out the form and our team will reach out to you shortly.
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

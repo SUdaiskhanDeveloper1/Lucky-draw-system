@@ -11,6 +11,7 @@ import {
   Tag,
   Landmark,
   Smartphone,
+  ShieldCheck,
 } from "lucide-react";
 import type { Campaign, PaymentMethod, PaymentChannel } from "@/lib/types/database";
 import { createClient } from "@/lib/supabase/client";
@@ -174,8 +175,8 @@ export function CheckoutForm({
     <div className="grid gap-6 lg:grid-cols-3">
       {/* Summary */}
       <div className="space-y-4 lg:col-span-1">
-        <Card>
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-xl bg-muted">
+        <Card className="overflow-hidden lg:sticky lg:top-24">
+          <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
             {campaign.prize_image ? (
               <Image
                 src={campaign.prize_image}
@@ -185,35 +186,50 @@ export function CheckoutForm({
                 className="object-cover"
               />
             ) : (
-              <div className="flex h-full items-center justify-center text-muted-foreground">
+              <div className="flex h-full items-center justify-center bg-gradient-to-br from-accent to-muted text-muted-foreground">
                 <TicketIcon className="h-10 w-10" />
               </div>
             )}
           </div>
-          <CardContent className="space-y-3 pt-4">
-            <h2 className="text-lg font-semibold">{campaign.prize_name}</h2>
+          <CardContent className="space-y-4 p-5">
+            <h2 className="font-display text-lg font-bold tracking-tight">
+              {campaign.prize_name}
+            </h2>
+
             {campaign.end_date && (
-              <div className="rounded-lg border bg-muted p-3">
-                <p className="mb-1 text-xs text-muted-foreground">Ends in</p>
+              <div className="panel-inset">
+                <p className="eyebrow mb-2.5">Ends in</p>
                 <Countdown target={campaign.end_date} />
               </div>
             )}
-            <div className="space-y-2 border-t pt-3 text-sm">
+
+            <div className="space-y-2.5 border-t border-border/70 pt-4 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Entry fee</span>
-                <span>{formatCurrency(campaign.entry_fee)}</span>
+                <span className="font-medium tabular-nums">
+                  {formatCurrency(campaign.entry_fee)}
+                </span>
               </div>
               {discount > 0 && (
                 <div className="flex justify-between text-success">
                   <span>Coupon ({applied?.code})</span>
-                  <span>-{formatCurrency(discount)}</span>
+                  <span className="font-medium tabular-nums">
+                    -{formatCurrency(discount)}
+                  </span>
                 </div>
               )}
-              <div className="flex justify-between border-t pt-2 text-base font-semibold">
-                <span>Total</span>
-                <span>{formatCurrency(total)}</span>
+              <div className="flex items-baseline justify-between border-t border-border/70 pt-3">
+                <span className="font-semibold">Total</span>
+                <span className="font-display text-xl font-extrabold tabular-nums text-primary">
+                  {formatCurrency(total)}
+                </span>
               </div>
             </div>
+
+            <p className="flex items-center gap-2 rounded-lg bg-success/8 px-3 py-2.5 text-xs font-medium text-success">
+              <ShieldCheck className="h-4 w-4 shrink-0" aria-hidden />
+              100% secure — reviewed by our team
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -225,12 +241,15 @@ export function CheckoutForm({
           <Card>
             <CardHeader>
               <CardTitle>Choose payment method</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Send the amount, then confirm the details below.
+              </p>
             </CardHeader>
             <CardContent className="space-y-3">
               {methods.length === 0 && (
-                <p className="text-sm text-muted-foreground">
+                <div className="rounded-xl border border-dashed border-border p-5 text-sm text-muted-foreground">
                   No payment methods are configured. Please contact support.
-                </p>
+                </div>
               )}
               {methods.map((m) => {
                 const active = selected?.id === m.id;
@@ -241,24 +260,34 @@ export function CheckoutForm({
                     key={m.id}
                     type="button"
                     onClick={() => setSelected(m)}
+                    aria-pressed={active}
                     className={cn(
-                      "w-full rounded-xl border p-4 text-left transition-colors",
+                      "w-full rounded-xl border p-4 text-left transition-all duration-300 ease-out-expo",
                       active
-                        ? "border-primary bg-accent/40 ring-1 ring-primary"
-                        : "hover:bg-secondary"
+                        ? "border-primary bg-accent/60 shadow-soft ring-1 ring-primary/25"
+                        : "border-border hover:border-primary/25 hover:bg-secondary/60"
                     )}
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="flex items-center gap-2 font-medium">
-                        <Icon className="h-4 w-4" />
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="flex items-center gap-3 font-semibold">
+                        <span
+                          className={cn(
+                            "flex h-9 w-9 items-center justify-center rounded-lg transition-colors duration-300",
+                            active
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-secondary text-muted-foreground"
+                          )}
+                        >
+                          <Icon className="h-4 w-4" />
+                        </span>
                         {methodLabels[m.method] ?? m.method}
                       </span>
                       {active && (
-                        <CheckCircle2 className="h-5 w-5 text-primary" />
+                        <CheckCircle2 className="h-5 w-5 shrink-0 text-primary" />
                       )}
                     </div>
                     {active && (
-                      <dl className="mt-3 space-y-1 border-t pt-3 text-sm">
+                      <dl className="mt-4 space-y-2 border-t border-border/70 pt-3.5 text-sm">
                         {m.bank_name && (
                           <Row label="Bank" value={m.bank_name} />
                         )}
@@ -273,7 +302,7 @@ export function CheckoutForm({
                         )}
                         {m.iban && <Row label="IBAN" value={m.iban} />}
                         {m.instructions && (
-                          <p className="pt-1 text-xs text-muted-foreground">
+                          <p className="pt-1.5 text-xs leading-relaxed text-muted-foreground">
                             {m.instructions}
                           </p>
                         )}
@@ -289,9 +318,12 @@ export function CheckoutForm({
           <Card>
             <CardHeader>
               <CardTitle>Payment details</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Enter the transaction reference so we can verify your entry.
+              </p>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
+            <CardContent className="space-y-5">
+              <div className="grid gap-5 sm:grid-cols-2">
                 <div>
                   <Label htmlFor="txn">Transaction ID</Label>
                   <Input
@@ -394,18 +426,22 @@ export function CheckoutForm({
                 )}
               </div> */}
 
-              <Button
-                type="submit"
-                className="w-full"
-                loading={submitting}
-                disabled={methods.length === 0}
-              >
-                Submit payment • {formatCurrency(total)}
-              </Button>
-              <p className="text-center text-xs text-muted-foreground">
-                Your payment will be reviewed by our team. You&apos;ll be
-                notified once it&apos;s approved.
-              </p>
+              <div className="space-y-3 border-t border-border/70 pt-5">
+                <Button
+                  type="submit"
+                  variant="gradient"
+                  size="lg"
+                  className="w-full"
+                  loading={submitting}
+                  disabled={methods.length === 0}
+                >
+                  Submit payment • {formatCurrency(total)}
+                </Button>
+                <p className="text-center text-xs leading-relaxed text-muted-foreground">
+                  Your payment will be reviewed by our team. You&apos;ll be
+                  notified once it&apos;s approved.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </form>
@@ -418,7 +454,7 @@ function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between gap-3">
       <dt className="text-muted-foreground">{label}</dt>
-      <dd className="font-medium">{value}</dd>
+      <dd className="text-right font-semibold">{value}</dd>
     </div>
   );
 }

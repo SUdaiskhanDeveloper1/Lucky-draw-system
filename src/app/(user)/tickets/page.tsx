@@ -1,10 +1,18 @@
 import { Ticket as TicketIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate } from "@/lib/utils";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/misc";
 import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableWrap,
+  TBody,
+  TD,
+  TH,
+  THead,
+  TR,
+} from "@/components/ui/table";
 import Link from "next/link";
 import type { Ticket } from "@/lib/types/database";
 
@@ -42,39 +50,52 @@ export default async function TicketsPage() {
   }
 
   return (
-    <Card>
-      <CardContent className="p-0">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b text-left text-muted-foreground">
-                <th className="px-4 py-3 font-medium">Ticket Number</th>
-                <th className="px-4 py-3 font-medium">Campaign</th>
-                <th className="px-4 py-3 font-medium">Purchase Date</th>
-                <th className="px-4 py-3 font-medium">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {tickets.map((t) => (
-                <tr key={t.id} className="hover:bg-secondary/50">
-                  <td className="px-4 py-3 font-mono font-medium">
-                    {t.ticket_number}
-                  </td>
-                  <td className="px-4 py-3">
-                    {t.campaigns?.prize_name ?? "—"}
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {formatDate(t.created_at)}
-                  </td>
-                  <td className="px-4 py-3">
-                    <Badge status={t.status} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="space-y-5">
+      <p className="text-sm text-muted-foreground">
+        You have{" "}
+        <span className="font-semibold tabular-nums text-foreground">
+          {tickets.length}
+        </span>{" "}
+        {tickets.length === 1 ? "ticket" : "tickets"} in total.
+      </p>
+
+      <TableWrap>
+        <Table>
+          <THead>
+            <tr>
+              <TH>Ticket Number</TH>
+              <TH>Campaign</TH>
+              <TH>Purchase Date</TH>
+              <TH className="text-right">Status</TH>
+            </tr>
+          </THead>
+          <TBody>
+            {tickets.map((t) => (
+              <TR key={t.id}>
+                <TD>
+                  <span className="inline-flex items-center gap-2.5">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+                      <TicketIcon className="h-3.5 w-3.5" />
+                    </span>
+                    <span className="font-mono text-[0.8125rem] font-semibold">
+                      {t.ticket_number}
+                    </span>
+                  </span>
+                </TD>
+                <TD className="font-medium">
+                  {t.campaigns?.prize_name ?? "—"}
+                </TD>
+                <TD className="whitespace-nowrap text-muted-foreground">
+                  {formatDate(t.created_at)}
+                </TD>
+                <TD className="text-right">
+                  <Badge status={t.status} />
+                </TD>
+              </TR>
+            ))}
+          </TBody>
+        </Table>
+      </TableWrap>
+    </div>
   );
 }

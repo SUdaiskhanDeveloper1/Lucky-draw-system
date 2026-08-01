@@ -19,10 +19,10 @@ export default async function AdminWinnersPage() {
   ]);
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Winner Management</h1>
-        <p className="text-sm text-muted-foreground">
+        <h1 className="font-display text-2xl font-extrabold tracking-tight">Winner Management</h1>
+        <p className="mt-1.5 text-sm text-muted-foreground">
           Draw winners automatically or record them manually
         </p>
       </div>
